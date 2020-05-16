@@ -8,20 +8,16 @@ STATUS_DIR = 'status'
 def _get_status_path(video_name):   
     return Path(STATUS_DIR, video_name + ".status")
 
-def _get_lock(status_path):
-    return FileLock(str(status_path) + ".lock")
-
 def update_status(video_name, status):
     status_path = _get_status_path(video_name)
 
-    with _get_lock(status_path):
-        with open(status_path, "w+") as sf:
-            sf.write(status)
+    with FileLock(str(status_path) + ".lock"):
+        open(status_path, "w+").write(status)
 
 def read_status(video_name):
     status_path = _get_status_path(video_name)
 
-    with _get_lock(status_path):
+    with FileLock(str(status_path) + ".lock"):
         with open(status_path, "r") as sf:
             return sf.read()
 
