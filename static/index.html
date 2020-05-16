@@ -1,0 +1,45 @@
+<html>
+    <head>
+        <!-- Plyr dependencies -->
+        <script src="https://cdn.plyr.io/3.6.2/plyr.polyfilled.js"></script>
+        <link rel="stylesheet" href="https://cdn.plyr.io/3.6.2/plyr.css" />
+
+        <!-- Dash dependencies -->
+        <script src="https://cdn.dashjs.org/latest/dash.all.min.js"></script>
+
+        <!-- Create the Plyr player -->
+        <script>
+            document.addEventListener('DOMContentLoaded', () => {
+                // First real dialog starts around 1:47
+                const source = '/media/dash.mpd';
+                // For more dash options, see https://github.com/Dash-Industry-Forum/dash.js
+                const dash = dashjs.MediaPlayer().create();
+                const video = document.querySelector('video');
+
+                //dash.getDebug().setLogToBrowserConsole(false);
+                dash.initialize(video, source, true);
+
+                // Update caption tracks after initializing Plyr to get the generated captions
+                // For more options see: https://github.com/sampotts/plyr/#options
+                const player = new Plyr(video, {captions: {active: true, update: true}});
+
+                // Expose player and dash so they can be used from the console
+                window.player = player;
+                window.dash = dash;
+            });
+        </script>
+    </head>
+
+    <body>
+        <h1>Some Video Title</h1>
+
+        <video id="player" playsinline controls data-poster="/path/to/poster.jpg">
+            <!--<source src="test-video.webm" type="video/webm" />-->
+            <!--<source src="//" type="video/mp4" /> -->
+
+            <!-- Captions are optional -->
+            <!-- TODO track captions later? -->
+            <!--<track kind="captions" label="English captions" src="/path/to/captions.vtt" srclang="en" default />-->
+        </video>
+    </body>
+</html>
