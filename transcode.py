@@ -4,6 +4,7 @@ import json
 import sys
 import os
 import pyinotify
+import argparse
 
 from ffmpeg_streaming import Formats 
 from multiprocessing import Process, Queue
@@ -14,72 +15,30 @@ import video_status
 
 # TODO Add logging where print()s are used
 
-UPLOAD_ROOT = "uploads"
-TRANSCODE_ROOT = "transcode"
-TRANSCODE_OUTPUT_NAME = "dash.mpd"
+MEDIA_ROOT = Path('runtime/media/')
+DASH_MPD_FILENAME = 'dash.mpd'
 
-def transcode_process(queue):
-    while True:
-        message = queue.get(block=True)
+def transcode(original_mp4_path, output_video_id):
+    output_dir = MEDIA_ROOT / output_video_id
+    try:
+        output_dir.mkdir()
+    except FileExistsError:
+        print("Video with id '%s' already exists" % output_video_id)
+        return
 
-        if message['type'] == 'video_uploaded':
-            path = message['path']
+    input_video = ffmpeg_streaming.input(original_mp4_path)
+    dash = input_video.dash(Formats.h264())
+    dash.auto_generate_representations()
+    dash.output(str(output_dir / DASH_MPD_FILENAME))
 
-            print("Transcoding " + path)
+parser = argparse.ArgumentParser(description='Process some integers.')
+parser.add_argument('--input', type=str)
+parser.add_argument('--output', type=str)
 
-            # Get the file name w/out the path
-            video_filename = os.path.split(path)[1]
-
-            # Remove extension
-            video_name = video_filename.rsplit('.', 1)[0]
-
-            # Create transcode output directory
-            transcode_dir = Path(TRANSCODE_ROOT, video_name)
-
-            # Create status file with TRANSCODING status
-            video_status.update_status(video_name, "TRANSCODING")
-
-            # Transcode the video
-            input_video = ffmpeg_streaming.input(path)
-            dash = input_video.dash(Formats.h264())
-            dash.auto_generate_representations()
-            dash.output(str(transcode_dir / TRANSCODE_OUTPUT_NAME))
-
-            video_status.update_status(video_name, "DONE")
-        else:
-            print('Unsupported message type %s' % message['type'])
-
-
-class UploadCreationHandler(pyinotify.ProcessEvent):
-    def my_init(self, queue):
-        self.queue = queue
-
-    def process_default(self, event):
-        if event.dir:
-            print('Directory created, ignoring')
-            return
-
-        print('Recieved file event %s' % str(event))
-        self.queue.put({
-                'type': 'video_uploaded',
-                'path': event.pathname
-            })
 
 if __name__ == '__main__':
-    queue = Queue()
+    args = parser.parse_args()
 
-    # Start the event processor
-    reader_p = Process(target=transcode_process, args=((queue),))
-    reader_p.daemon = True
-    reader_p.start()
-    print("Transcode handler started")
+    transcode(args.input, args.output)
 
-    # Start the file watch (emits events)
-    wm = pyinotify.WatchManager()
-    # It is important to pass named extra arguments like 'fileobj'.
-    handler = UploadCreationHandler(queue=queue)
-    notifier = pyinotify.Notifier(wm, default_proc_fun=handler)
-    wm.add_watch(UPLOAD_ROOT, pyinotify.IN_CREATE)
-    print("Starting file system watch")
-    notifier.loop()
     
