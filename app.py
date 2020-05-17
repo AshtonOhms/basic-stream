@@ -1,5 +1,8 @@
 import json
 import os
+import redis
+import random
+import string
 
 from flask import Flask, request, \
     send_from_directory, flash, redirect, url_for, render_template
@@ -7,6 +10,9 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_user import login_required, UserManager, UserMixin
 from pathlib import Path
 from werkzeug.utils import secure_filename
+
+# Local imports
+import sessions
 
 
 # Statics
@@ -74,12 +80,32 @@ def serve_dash(video_id, path):
 
     return send_from_directory(video_dir, path)
 
+# Routes for watching
+
 @app.route('/watch/<video_id>')
 @login_required
 def watch_page(video_id):
-    dash_mpd_url = "/media/%s/%s" % (video_id, DASH_MPD_FILENAME) # TODO configure 'media' path
+    session_id = sessions.create_session(video_id)
 
-    return render_template('watch.jinja2', dash_mpd_url=dash_mpd_url)
+    return redirect("/session/%s" % session_id)
+
+@app.route('/session/<session_id>')
+@login_required
+def watch_session(session_id):
+    video_id = sessions.get_session_video_id(session_id)
+
+    dash_mpd_url = "/media/%s/%s" % (video_id, DASH_MPD_FILENAME) # TODO configure 'media' path elsewhere
+
+    return render_template('watch.jinja2',
+        session_id = session_id,
+        dash_mpd_url=dash_mpd_url)
+
+@app.route('/session/<session_id>/time', methods=['POST'])
+@login_required
+def post_watch_status(session_id):
+    time = 0
+
+    sessions.set_user_status(session_id, time)
 
 @app.route('/')
 @login_required
