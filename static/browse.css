@@ -1,8 +1,8 @@
-.video {
+.poster {
     max-width: 375px;
     overflow: hidden;
 }
 
-.video img {
+.poster img {
   max-width: initial; /* Maybe optional. See note below */
 }
