@@ -5,6 +5,8 @@ A basic video streaming site build with Flask, Plyr, and Dash.js
 
 ## TODO
 
+* ADD LOGGING
+* Make dev environment with reloading on flaskapp + static resources
 * Get Plyr/Dash dependencies from diff CDN/no CDN?
 * Minification (necessary?)
 * Add linting/format to PEP8 (linting for imports)
