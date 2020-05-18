@@ -80,8 +80,8 @@ def serve_dash(video_id, path):
 
     return send_from_directory(video_dir, path)
 
-
-@app.route("/static-auth")
+# Called by nginx to authenticate requests for media
+@app.route("/auth")
 def nginx_auth():
     if current_user.is_authenticated:
         return "auth passed"
