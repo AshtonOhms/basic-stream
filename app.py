@@ -16,15 +16,14 @@ import sessions
 
 
 # Statics
-RUNTIME_DIR = Path('runtime')
-SQLITE_DB = RUNTIME_DIR / 'app.sqlite'
-UPLOADS_DIR = RUNTIME_DIR / 'upload'
-MEDIA_DIR = RUNTIME_DIR / 'media'
+SERVER_ROOT = Path('/srv')
+SQLITE_DB = SERVER_ROOT / 'sqlite' / 'app.sqlite'
+UPLOADS_DIR = SERVER_ROOT / 'uploads'
+MEDIA_DIR = SERVER_ROOT / 'media'
 DASH_MPD_FILENAME = 'dash.mpd'
 ALLOWED_EXTENSIONS = {'mp4'}
 
 DIRS_TO_CREATE = (
-    RUNTIME_DIR,
     UPLOADS_DIR,
     MEDIA_DIR
 )

@@ -13,6 +13,8 @@ services:
       - redis
     volumes:
       - uploads:/srv/uploads
+      - media:/srv/media
+      - sqlite:/srv/sqlite
 
   # Frontend
   nginx:
@@ -24,13 +26,16 @@ services:
       - web
     environment:
       CERTBOT_EMAIL: ssl@ashtonoh.ms
-      ENVSUBST_VARS: FQDN # space-separated
+      ENVSUBST_VARS: FQDN  # space-separated
       FQDN: play.ashtonoh.ms
     volumes:
       - ./nginx:/etc/nginx/user.conf.d:ro
       - ./static:/srv/static:ro
       - letsencrypt:/etc/letsencrypt
+      - media:/srv/media
 
 volumes:
   letsencrypt:
-  uploads:
+  uploads: # User-uploaded videos
+  media: # Transcoded videos
+  sqlite: # SQLite DB
