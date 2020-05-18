@@ -2,10 +2,23 @@
 <html>
   <head>
     <title>List of videos</title>
+    <link rel="stylesheet" type="text/css" href="/static/css-reset.css">
+    <link rel="stylesheet" type="text/css" href="/static/browse.css">
   </head>
 
   <body>
     <h1>Videos</h1>
+
+    <div class="posters">
+      {% for video in videos %}
+      <div class="poster">
+        <a href="/watch/{{video.video_id}}">
+          <img src="{{video.poster_url}}" alt="{{video.video_id}}">
+          {{ video_id }}
+        </a>
+      <div>
+      {% endfor %}
+    </div>
 
     <ul>
       {% for video_id in video_ids %}

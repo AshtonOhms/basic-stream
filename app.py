@@ -110,6 +110,7 @@ def watch_session(session_id):
 @app.route('/session/<session_id>/time', methods=['POST'])
 @login_required
 def post_watch_status(session_id):
+    # TODO Implement
     time = 0
 
     sessions.set_user_status(session_id, time)
@@ -123,7 +124,13 @@ def list_page():
 
     video_ids = [video_dir.name for video_dir in video_dirs]
 
-    return render_template('list.jinja2', video_ids=video_ids)
+    videos = [{
+        video_id: video_id,
+        poster_url: "/media/%s/poster.png" % video_id
+    } for video_id in video_ids]
+
+    return render_template('list.jinja2', videos=videos)
+
 
 
 # Stuff for uploading
