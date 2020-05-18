@@ -12,3 +12,4 @@ A basic video streaming site build with Flask, Plyr, and Dash.js
 * Configure a PyCharm w/ WSL workspace
 * Add git hook for generating `requirements.txt`
 * Use POSIX message queues for transcoding jobs
+* Add volumes to Docker compose
