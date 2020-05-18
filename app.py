@@ -80,6 +80,14 @@ def serve_dash(video_id, path):
 
     return send_from_directory(video_dir, path)
 
+
+@app.route("/static-auth")
+def nginx_auth():
+    if current_user.is_authenticated:
+        return "auth passed"
+    else:
+        return 'auth failed', 401
+
 # Routes for watching
 
 @app.route('/watch/<video_id>')

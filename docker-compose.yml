@@ -11,6 +11,8 @@ services:
       - "8000"
     depends_on:
       - redis
+    volumes:
+      - uploads:/srv/uploads
 
   # Frontend
   nginx:
@@ -26,7 +28,9 @@ services:
       FQDN: play.ashtonoh.ms
     volumes:
       - ./nginx:/etc/nginx/user.conf.d:ro
+      - ./static:/srv/static
       - letsencrypt:/etc/letsencrypt
 
 volumes:
   letsencrypt:
+  uploads:
