@@ -125,8 +125,8 @@ def list_page():
     video_ids = [video_dir.name for video_dir in video_dirs]
 
     videos = [{
-        video_id: video_id,
-        poster_url: "/media/%s/poster.png" % video_id
+        "video_id": video_id,
+        "poster_url": "/media/%s/poster.png" % video_id
     } for video_id in video_ids]
 
     return render_template('list.jinja2', videos=videos)
