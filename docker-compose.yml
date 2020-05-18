@@ -28,7 +28,7 @@ services:
       FQDN: play.ashtonoh.ms
     volumes:
       - ./nginx:/etc/nginx/user.conf.d:ro
-      - ./static:/srv/static
+      - ./static:/srv/static:ro
       - letsencrypt:/etc/letsencrypt
 
 volumes:
