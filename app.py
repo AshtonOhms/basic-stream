@@ -7,7 +7,7 @@ import string
 from flask import Flask, request, \
     send_from_directory, flash, redirect, url_for, render_template
 from flask_sqlalchemy import SQLAlchemy
-from flask_user import login_required, UserManager, UserMixin
+from flask_user import current_user, login_required, UserManager, UserMixin
 from pathlib import Path
 from werkzeug.utils import secure_filename
 
