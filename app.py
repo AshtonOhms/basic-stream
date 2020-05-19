@@ -149,7 +149,7 @@ def upload():
         file = request.files['file']
 
         if 'title' not in request.files:
-            flask('No id provided')
+            flash('No id provided')
             return redirect(request.url)
         title = request.files['title']
 
