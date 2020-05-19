@@ -173,7 +173,7 @@ def upload():
             file.save(str(filepath))
 
             # Enqueue celery task to transcode
-            transcoder.transcode.delay(filepath, video_id)
+            transcoder.transcode_video.delay(filepath, video_id)
 
             return redirect('/') # TODO redirect to a static page
 
