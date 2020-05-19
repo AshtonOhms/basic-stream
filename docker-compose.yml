@@ -20,7 +20,7 @@ services:
   # TODO change to different image??
   transcode:
     build: .
-    command: celery worker -l info -A transcoder.transcode
+    command: celery worker -l info -A transcoder:celery
     depends_on:
       - redis
     volumes:
