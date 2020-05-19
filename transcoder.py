@@ -6,9 +6,6 @@ from ffmpeg_streaming import Formats
 from multiprocessing import Process, Queue
 from pathlib import Path
 
-# Local imports
-import video_status
-
 # TODO Add logging where print()s are used
 
 MEDIA_ROOT = Path('/srv/media/') # TODO common config with app.py
