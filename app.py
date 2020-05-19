@@ -148,10 +148,10 @@ def upload():
             return redirect(request.url)
         file = request.files['file']
 
-        if 'title' not in request.files:
+        if 'title' not in request.form:
             flash('No id provided')
             return redirect(request.url)
-        title = request.files['title']
+        title = request.form['title']
 
         # TODO make video ID generation better
         valid_chars = string.ascii_lowercase + string.digits
