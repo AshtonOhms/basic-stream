@@ -12,7 +12,7 @@ MEDIA_ROOT = Path('/srv/media/') # TODO common config with app.py
 DASH_MPD_FILENAME = 'dash.mpd'
 
 celery = Celery('transcode')
-app.config_from_object('celeryconfig')
+celery.config_from_object('celeryconfig')
 
 @task(name="transcode_video")
 def transcode_video(original_video_path, output_video_id):
