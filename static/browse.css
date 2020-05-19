@@ -1,4 +1,4 @@
-.posters: {
+.posters {
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
@@ -7,11 +7,17 @@
 .poster {
     width:200px;
     height:300px;
+    margin:5px;
+    transition: transform .2s;
 
     background-color: #f1f1f1;
-
+   
     overflow: hidden;
+}
 
+.poster:hover {
+    
+    transform: scale(1.1);
 }
 
 .poster img {
