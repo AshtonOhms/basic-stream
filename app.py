@@ -13,7 +13,7 @@ from werkzeug.utils import secure_filename
 
 # Local imports
 import sessions
-
+import transcoder
 
 # Statics
 SERVER_ROOT = Path('/srv')
@@ -65,7 +65,6 @@ class User(db.Model, UserMixin):
 db.create_all()
 
 user_manager = UserManager(app, db, User)
-
 
 # TODO get rid of this, serve statics via nginx?
 @app.route('/static/<path:path>')
@@ -149,6 +148,15 @@ def upload():
             return redirect(request.url)
         file = request.files['file']
 
+        if 'title' not in request.files:
+            flask('No id provided')
+            return redirect(request.url)
+        title = request.files['title']
+
+        # TODO make video ID generation better
+        valid_chars = string.ascii_lowercase + string.digits
+        video_id = "".join([c for c in title.replace(" ", "_").lower() if c in valid_chars])
+
         # if user does not select file, browser also
         # submit an empty part without filename
         if file.filename == '':
@@ -157,11 +165,19 @@ def upload():
 
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
-            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename)) # TODO use pathlib.Path here
+            filepath = UPLOADS_DIR / filename
 
-            return redirect('index.html')
+            # TODO this relies on the fact that the transcode container
+            # gets the same /srv/upload and /srv/media mounts as the transcoder,
+            # fix this by making it relative to the respective roots?
+            file.save(str(filepath))
 
-    return send_from_directory('static', 'upload.html')
+            # Enqueue celery task to transcode
+            transcoder.transcode.delay(filepath, video_id)
+
+            return redirect('/') # TODO redirect to a static page
+
+    return return render_template('upload.jinja2')
 
 
 if __name__ == '__main__':

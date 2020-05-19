@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<!-- todo rename to browse.jinja2 -->
 <html>
   <head>
     <title>List of videos</title>
@@ -14,7 +15,7 @@
         <div class="poster">
           <a href="/watch/{{video.video_id}}">
             <img src="{{video.poster_url}}" alt="{{video.video_id}}">
-            {{ video_id }}
+            <span class="title">{{ video.video_id }}<title>
           </a>
         <div>
       {% endfor %}

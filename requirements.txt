@@ -5,3 +5,4 @@ Flask-User
 gunicorn
 python-ffmpeg-video-streaming
 redis
+celery

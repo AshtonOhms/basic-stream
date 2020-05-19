@@ -1,5 +1,12 @@
+.posters: {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+
 .poster {
     max-width: 375px;
+    max-height:;
     overflow: hidden;
 }
 

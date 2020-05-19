@@ -16,6 +16,17 @@ services:
       - media:/srv/media
       - sqlite:/srv/sqlite
 
+  # Transcode worker, same image as `web`
+  # TODO change to different image??
+  transcode:
+    build: .
+    command: celery worker -l info -A transcoder.transcode
+    depends_on:
+      - redis
+    volumes:
+      - uploads:/srv/uploads
+      - media:/srv/media
+
   # Frontend
   nginx:
     image: staticfloat/nginx-certbot
