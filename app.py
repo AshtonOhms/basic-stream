@@ -165,12 +165,12 @@ def upload():
 
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
-            filepath = UPLOADS_DIR / filename
+            filepath = str(UPLOADS_DIR / filename)
 
             # TODO this relies on the fact that the transcode container
             # gets the same /srv/upload and /srv/media mounts as the transcoder,
             # fix this by making it relative to the respective roots?
-            file.save(str(filepath))
+            file.save(filepath)
 
             # Enqueue celery task to transcode
             transcoder.transcode_video.delay(filepath, video_id)
