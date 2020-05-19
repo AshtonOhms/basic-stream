@@ -177,7 +177,7 @@ def upload():
 
             return redirect('/') # TODO redirect to a static page
 
-    return return render_template('upload.jinja2')
+    return render_template('upload.jinja2')
 
 
 if __name__ == '__main__':

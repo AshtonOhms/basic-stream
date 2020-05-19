@@ -1,10 +1,4 @@
 import ffmpeg_streaming
-import functools
-import json
-import sys
-import os
-import pyinotify
-import argparse
 
 from celery import Celery
 from celery.decorators import task
