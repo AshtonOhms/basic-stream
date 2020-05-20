@@ -25,7 +25,7 @@ def transcode_video(self, original_video_path, output_video_id):
 
     def monitor(ffmpeg, duration, time):
         self.update_state(state='PROGRESS',
-                          meta = { 'time': time, 'duration': duration })
+                          meta = { 'time': str(time), 'duration': str(duration) })
 
     input_video = ffmpeg_streaming.input(original_video_path)
     dash = input_video.dash(Formats.h264())
