@@ -14,8 +14,8 @@ DASH_MPD_FILENAME = 'dash.mpd'
 celery = Celery('transcode')
 celery.config_from_object('celeryconfig')
 
-@task(name="transcode_video")
-def transcode_video(original_video_path, output_video_id):
+@task(name="transcode_video", bind=True)
+def transcode_video(self, original_video_path, output_video_id):
     output_dir = MEDIA_ROOT / output_video_id
     try:
         output_dir.mkdir()
@@ -23,8 +23,13 @@ def transcode_video(original_video_path, output_video_id):
         print("Video with id '%s' already exists" % output_video_id)
         return
 
+    def monitor(ffmpeg, duration, time_):
+        self.update_state(state='PROGRESS',
+                          meta = { 'time': _time, 'duration': duration })
+
     input_video = ffmpeg_streaming.input(original_video_path)
     dash = input_video.dash(Formats.h264())
     dash.auto_generate_representations()
-    dash.output(str(output_dir / DASH_MPD_FILENAME))
+    dash.output(str(output_dir / DASH_MPD_FILENAME), monitor=monitor)
     
+    # TODO return video ID for redirect here

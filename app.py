@@ -4,8 +4,9 @@ import redis
 import random
 import string
 
+from celery.result import AsyncResult
 from flask import Flask, request, \
-    send_from_directory, flash, redirect, url_for, render_template
+    send_from_directory, flash, redirect, url_for, render_template, jsonify #TODO alphabetize
 from flask_sqlalchemy import SQLAlchemy
 from flask_user import current_user, login_required, UserManager, UserMixin
 from pathlib import Path
@@ -130,7 +131,40 @@ def browse_page():
 
     return render_template('browse.jinja2', videos=videos)
 
+@app.route('/transcode/<task_id>')
+@login_required
+def transcode_status_page(task_id):
+    return render_template('transcode.jinja2')
 
+@app.route('/transcode/<task_id>/status')
+@login_required
+def transcode_status(task_id):
+    task = AsyncResult(task_id)
+    if task.state == 'PENDING':
+        # Not yet started
+        response = {
+            'state': task.state,
+            'time': 0,
+            'duration': 1,
+            'status': 'Pending...'
+        }
+    elif task.state != 'FAILURE':
+        response = {
+            'state': task.state,
+            'time': task.info.get('time', 0),
+            'duration': task.info.get('duration', 1),
+            'status': 'Transcoding...'
+        }
+    else:
+        # Failure!
+        response = {
+            'state': task.state,
+            'time': 1,
+            'duration': 1,
+            'status': str(task.info) # This is the exception
+        }
+
+    return jsonify(response)
 
 # Stuff for uploading
 def allowed_file(filename):
@@ -173,9 +207,9 @@ def upload():
             file.save(filepath)
 
             # Enqueue celery task to transcode
-            transcoder.transcode_video.delay(filepath, video_id)
+            task = transcoder.transcode_video.apply_async((filepath, video_id))
 
-            return redirect('/') # TODO redirect to a static page
+            return redirect('/transcode/%s' % task.task_id) # TODO redirect to a static page
 
     return render_template('upload.jinja2')
 

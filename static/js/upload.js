@@ -11,6 +11,7 @@ function uploadProgressHandler(event) {
 uploadForm.addEventListener('submit', (event) => {
     const formData = new FormData(uploadForm);
 
+    // TODO change to use fetch()
     var xhr = new XMLHttpRequest();
     xhr.open(uploadForm.method, uploadForm.getAttribute("action"));
     xhr.upload.addEventListener('progress', uploadProgressHandler, false);

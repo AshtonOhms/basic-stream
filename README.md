@@ -5,7 +5,9 @@ A basic video streaming site build with Flask, Plyr, and Dash.js
 
 ## TODO
 
+* Move flask app to a subdir
 * ADD LOGGING
+* PEP8 formatting
 * Make dev environment with reloading on flaskapp + static resources
 * Get Plyr/Dash dependencies from diff CDN/no CDN?
 * Minification (necessary?)
@@ -15,4 +17,6 @@ A basic video streaming site build with Flask, Plyr, and Dash.js
 * Use POSIX message queues for transcoding jobs
 * Add volumes to Docker compose
 * Surface media, upload volumes to Flask via environment variables  
-* Postgres
+* Postgres/db other than sqlite
+* Testing
+* Polyfill? Do I care about supporting older browsers?
