@@ -23,9 +23,9 @@ def transcode_video(self, original_video_path, output_video_id):
         print("Video with id '%s' already exists" % output_video_id)
         return
 
-    def monitor(ffmpeg, duration, time_):
+    def monitor(ffmpeg, duration, time):
         self.update_state(state='PROGRESS',
-                          meta = { 'time': _time, 'duration': duration })
+                          meta = { 'time': time, 'duration': duration })
 
     input_video = ffmpeg_streaming.input(original_video_path)
     dash = input_video.dash(Formats.h264())

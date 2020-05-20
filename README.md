@@ -7,6 +7,7 @@ A basic video streaming site build with Flask, Plyr, and Dash.js
 
 * Move flask app to a subdir
 * ADD LOGGING
+* Handle duplicate file names during upload
 * PEP8 formatting
 * Make dev environment with reloading on flaskapp + static resources
 * Get Plyr/Dash dependencies from diff CDN/no CDN?
