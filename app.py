@@ -116,7 +116,7 @@ def post_watch_status(session_id):
 
 @app.route('/')
 @login_required
-def list_page():
+def browse_page():
     # Each video's DASH encodings will live in a directory in
     # the media directory
     video_dirs = [path for path in MEDIA_DIR.iterdir() if path.is_dir()]
@@ -128,7 +128,7 @@ def list_page():
         "poster_url": "/media/%s/poster.png" % video_id
     } for video_id in video_ids]
 
-    return render_template('list.jinja2', videos=videos)
+    return render_template('browse.jinja2', videos=videos)
 
 
 
