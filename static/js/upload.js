@@ -4,7 +4,7 @@ const uploadProgress = document.getElementById('upload-progress');
 function uploadProgressHandler(event) {
     if (event.lengthComputable) {
         uploadProgress.setAttribute('value', event.loaded);
-        uploadProgress.setAttribute('value', event.total);
+        uploadProgress.setAttribute('max', event.total);
     }
 }
 
