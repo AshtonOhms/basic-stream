@@ -209,7 +209,7 @@ def upload():
             # Enqueue celery task to transcode
             task = transcoder.transcode_video.apply_async((filepath, video_id))
 
-            return redirect('/transcode/%s' % task.task_id) # TODO redirect to a static page
+            return redirect('/transcode/%s' % task.id) # TODO redirect to a static page
 
     return render_template('upload.jinja2')
 
