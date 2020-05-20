@@ -13,7 +13,7 @@ uploadForm.addEventListener('submit', (event) => {
 
     var xhr = new XMLHttpRequest();
     xhr.open(uploadForm.method, uploadForm.getAttribute("action"));
-    xhr.addEventListener('progress', uploadProgressHandler);
+    xhr.upload.addEventListener('progress', uploadProgressHandler, false);
     xhr.send(formData);
 
     event.preventDefault();
