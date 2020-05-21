@@ -1,6 +1,7 @@
 import ffmpeg_streaming
 
 from celery import Celery
+from celery.app import push_current_task, pop_current_task
 from celery.decorators import task
 from ffmpeg_streaming import Formats
 from pathlib import Path
@@ -15,7 +16,7 @@ celery.config_from_object('celeryconfig')
 
 
 @task(name="transcode_video", bind=True)
-def transcode_video(self, original_video_path, output_video_id, task_id=None):
+def transcode_video(self, original_video_path, output_video_id):
     output_dir = MEDIA_ROOT / output_video_id
     try:
         output_dir.mkdir()
@@ -24,9 +25,10 @@ def transcode_video(self, original_video_path, output_video_id, task_id=None):
         return
 
     def monitor(ffmpeg, duration, time):
-        self.update_state(task_id=task_id,
-                          state='PROGRESS',
+        push_current_task(self)
+        self.update_state(state='PROGRESS',
                           meta={'time': time, 'duration': duration})
+        pop_current_task()
 
     input_video = ffmpeg_streaming.input(original_video_path)
     dash = input_video.dash(Formats.h264())
