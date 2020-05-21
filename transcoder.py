@@ -2,20 +2,20 @@ import ffmpeg_streaming
 
 from celery import Celery
 from celery.decorators import task
-from ffmpeg_streaming import Formats 
-from multiprocessing import Process, Queue
+from ffmpeg_streaming import Formats
 from pathlib import Path
 
 # TODO Add logging where print()s are used
 
-MEDIA_ROOT = Path('/srv/media/') # TODO common config with app.py
+MEDIA_ROOT = Path('/srv/media/')  # TODO common config with app.py
 DASH_MPD_FILENAME = 'dash.mpd'
 
 celery = Celery('transcode')
 celery.config_from_object('celeryconfig')
 
+
 @task(name="transcode_video", bind=True)
-def transcode_video(self, original_video_path, output_video_id):
+def transcode_video(self, original_video_path, output_video_id, task_id=None):
     output_dir = MEDIA_ROOT / output_video_id
     try:
         output_dir.mkdir()
@@ -24,8 +24,9 @@ def transcode_video(self, original_video_path, output_video_id):
         return
 
     def monitor(ffmpeg, duration, time):
-        self.update_state(state='PROGRESS',
-                          meta = { 'time': str(time), 'duration': str(duration) })
+        self.update_state(task_id=task_id,
+                          state='PROGRESS',
+                          meta={'time': time, 'duration': duration})
 
     input_video = ffmpeg_streaming.input(original_video_path)
     dash = input_video.dash(Formats.h264())

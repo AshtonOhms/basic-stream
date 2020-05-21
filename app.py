@@ -1,7 +1,3 @@
-import json
-import os
-import redis
-import random
 import string
 
 from celery.result import AsyncResult
@@ -49,10 +45,12 @@ class ConfigClass(object):
     USER_ENABLE_USERNAME = True    # Enable username authentication
     USER_REQUIRE_RETYPE_PASSWORD = False    # Simplify register form
 
+
 # TODO move this app/db instantiation out of top-level
 app = Flask(__name__)
 app.config.from_object(__name__+'.ConfigClass')
 db = SQLAlchemy(app)
+
 
 # Set up user model for Flask-User
 class User(db.Model, UserMixin):
@@ -63,14 +61,17 @@ class User(db.Model, UserMixin):
     username = db.Column(db.String(100, collation='NOCASE'), nullable=False, unique=True)
     password = db.Column(db.String(255), nullable=False, server_default='')
 
+
 db.create_all()
 
 user_manager = UserManager(app, db, User)
+
 
 # TODO get rid of this, serve statics via nginx?
 @app.route('/static/<path:path>')
 def send_static(path):
     return send_from_directory('static', path)
+
 
 # TODO get rid of this, serve media via nginx?
 @app.route('/media/<video_id>/<path>')
@@ -78,6 +79,7 @@ def serve_dash(video_id, path):
     video_dir = MEDIA_DIR / video_id
 
     return send_from_directory(video_dir, path)
+
 
 # Called by nginx to authenticate requests for media
 @app.route("/auth")
@@ -89,12 +91,14 @@ def nginx_auth():
 
 # Routes for watching
 
+
 @app.route('/watch/<video_id>')
 @login_required
 def watch_page(video_id):
     session_id = sessions.create_session(video_id)
 
     return redirect("/session/%s" % session_id)
+
 
 @app.route('/session/<session_id>')
 @login_required
@@ -104,8 +108,9 @@ def watch_session(session_id):
     dash_mpd_url = "/media/%s/%s" % (video_id, DASH_MPD_FILENAME) # TODO configure 'media' path elsewhere
 
     return render_template('watch.jinja2',
-        session_id = session_id,
-        dash_mpd_url=dash_mpd_url)
+                           session_id = session_id,
+                           dash_mpd_url=dash_mpd_url)
+
 
 @app.route('/session/<session_id>/time', methods=['POST'])
 @login_required
@@ -114,6 +119,7 @@ def post_watch_status(session_id):
     time = 0
 
     sessions.set_user_status(session_id, time)
+
 
 @app.route('/')
 @login_required
@@ -131,10 +137,12 @@ def browse_page():
 
     return render_template('browse.jinja2', videos=videos)
 
+
 @app.route('/transcode/<task_id>')
 @login_required
 def transcode_status_page(task_id):
     return render_template('transcode.jinja2')
+
 
 @app.route('/transcode/<task_id>/status')
 @login_required
@@ -209,7 +217,7 @@ def upload():
             # Enqueue celery task to transcode
             task = transcoder.transcode_video.delay(filepath, video_id)
 
-            return redirect('/transcode/%s' % task.id) # TODO redirect to a static page
+            return redirect('/transcode/%s' % task.id)  # TODO redirect to a static page
 
     return render_template('upload.jinja2')
 
