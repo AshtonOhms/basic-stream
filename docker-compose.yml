@@ -29,24 +29,19 @@ services:
 
   # Frontend
   nginx:
-    image: staticfloat/nginx-certbot
+    image: nginx:alpine
     ports: 
       - 80:80/tcp
       - 443:443/tcp
     depends_on:
       - web
-    environment:
-      CERTBOT_EMAIL: ssl@ashtonoh.ms
-      ENVSUBST_VARS: FQDN  # space-separated
-      FQDN: play.ashtonoh.ms
     volumes:
-      - ./nginx:/etc/nginx/user.conf.d:ro
+      - ./nginx:/etc/nginx/conf.d:ro
       - ./static:/srv/static:ro
-      - letsencrypt:/etc/letsencrypt
-      - media:/srv/media
+      - letsencrypt:/etc/letsencrypt:ro
+      - media:/srv/media:ro
 
 volumes:
-  letsencrypt:
   uploads: # User-uploaded videos
   media: # Transcoded videos
   sqlite: # SQLite DB

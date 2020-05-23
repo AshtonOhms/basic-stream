@@ -1,0 +1,22 @@
+version: '3'
+services:
+  certbot:
+    image: certbot/certbot
+    container_name: certbot
+    volumes:
+      - letsencrypt:/etc/letsencrypt
+      - certbot-var:/var/lib/letsencrypt
+      - certbot-webroot:/srv/certbot
+    depends_on:
+      - nginx
+    command: certonly --webroot --webroot-path=/srv/certbot --email ssl@ashtonoh.ms --agree-tos --no-eff-email --staging -d play.ashtonoh.ms 
+
+  nginx:
+    volumes:
+      - letsencrypt:/etc/letsencrypt
+      - certbot-webroot:/srv/certbot
+
+volumes:
+  letsencrypt:
+  certbot-var:
+  certbot-webroot:
