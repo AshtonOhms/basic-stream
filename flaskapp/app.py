@@ -9,8 +9,8 @@ from pathlib import Path
 from werkzeug.utils import secure_filename
 
 # Local imports
-import sessions
-import transcoder
+from . import sessions
+from . import transcoder
 
 # Statics
 SERVER_ROOT = Path('/srv')
